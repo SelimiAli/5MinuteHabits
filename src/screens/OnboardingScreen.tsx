@@ -17,11 +17,11 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 }) => {
   const { habits, setHasCompletedOnboarding } = useHabitsStore();
 
-  const handleGetStarted = () => {
+  const handleGetStarted = async () => {
     if (habits.length === 0) {
       navigation.navigate('AddHabit', { isFirstHabit: true });
     } else {
-      setHasCompletedOnboarding(true);
+      await setHasCompletedOnboarding(true);
       navigation.replace('MainTabs');
     }
   };

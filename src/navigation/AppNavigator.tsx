@@ -62,24 +62,22 @@ export function AppNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {showOnboarding ? (
-          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        ) : (
-          <>
-            <Stack.Screen name="MainTabs" component={MainTabs} />
-            <Stack.Screen
-              name="AddHabit"
-              component={AddHabitScreen}
-              options={{ presentation: 'modal' }}
-            />
-            <Stack.Screen
-              name="EditHabit"
-              component={EditHabitScreen}
-              options={{ presentation: 'modal' }}
-            />
-          </>
-        )}
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={showOnboarding ? 'Onboarding' : 'MainTabs'}
+      >
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen
+          name="AddHabit"
+          component={AddHabitScreen}
+          options={{ presentation: 'modal' }}
+        />
+        <Stack.Screen
+          name="EditHabit"
+          component={EditHabitScreen}
+          options={{ presentation: 'modal' }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
