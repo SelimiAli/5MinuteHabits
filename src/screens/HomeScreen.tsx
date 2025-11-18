@@ -16,7 +16,7 @@ interface HomeScreenProps {
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
-  const { habits, loadHabits, completeHabit, resetDailyCompletion } =
+  const { habits, loadHabits, completeHabit, undoHabitCompletion, resetDailyCompletion } =
     useHabitsStore();
 
   useFocusEffect(
@@ -32,6 +32,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const handleComplete = (id: string) => {
     completeHabit(id);
+  };
+
+  const handleUndo = (id: string) => {
+    undoHabitCompletion(id);
   };
 
   const handleEdit = (habitId: string) => {
@@ -74,6 +78,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               key={habit.id}
               habit={habit}
               onComplete={() => handleComplete(habit.id)}
+              onUndo={() => handleUndo(habit.id)}
               onPress={() => handleEdit(habit.id)}
             />
           ))}

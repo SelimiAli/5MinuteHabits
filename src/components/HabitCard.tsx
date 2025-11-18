@@ -1,19 +1,23 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Habit } from '../types';
+import { isToday } from '../lib/date';
 
 interface HabitCardProps {
   habit: Habit;
   onComplete: () => void;
+  onUndo?: () => void;
   onPress: () => void;
 }
 
 export const HabitCard: React.FC<HabitCardProps> = ({
   habit,
   onComplete,
+  onUndo,
   onPress,
 }) => {
   const isCompleted = habit.completedToday;
+  const canUndo = isCompleted && isToday(habit.lastCompleted) && onUndo;
 
   return (
     <TouchableOpacity
@@ -50,8 +54,21 @@ export const HabitCard: React.FC<HabitCardProps> = ({
         )}
 
         {isCompleted && (
-          <View style={styles.completedBadge}>
-            <Text style={styles.completedText}>✓ Completed</Text>
+          <View style={styles.completedContainer}>
+            <View style={styles.completedBadge}>
+              <Text style={styles.completedText}>✓ Completed</Text>
+            </View>
+            {canUndo && (
+              <TouchableOpacity
+                style={styles.undoButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  onUndo();
+                }}
+              >
+                <Text style={styles.undoButtonText}>↩️ Undo</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
@@ -127,6 +144,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#065F46',
   },
+  completedContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   completedBadge: {
     backgroundColor: '#86EFAC',
     paddingHorizontal: 16,
@@ -137,6 +159,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#065F46',
+  },
+  undoButton: {
+    backgroundColor: '#FEE2E2',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 12,
+  },
+  undoButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#991B1B',
   },
 });
 

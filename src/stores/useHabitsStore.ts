@@ -7,7 +7,7 @@ import {
   saveOnboardingStatus,
 } from '../utils/storage';
 import { getTodayISO, isToday } from '../lib/date';
-import { checkStreak } from '../lib/streak';
+import { checkStreak, computeStreakAfterUndo } from '../lib/streak';
 import { scheduleHabitReminder, cancelHabitReminder } from '../lib/notifications';
 
 interface HabitsStore {
@@ -21,6 +21,7 @@ interface HabitsStore {
   updateHabit: (id: string, updates: Partial<Habit>) => Promise<void>;
   deleteHabit: (id: string) => Promise<void>;
   completeHabit: (id: string) => Promise<void>;
+  undoHabitCompletion: (id: string) => Promise<void>;
   resetDailyCompletion: () => Promise<void>;
   setHasCompletedOnboarding: (value: boolean) => void;
 }
@@ -143,6 +144,35 @@ export const useHabitsStore = create<HabitsStore>((set, get) => ({
       lastCompleted: todayISO,
       streak,
       longestStreak,
+    };
+
+    const updatedHabits = [...habits];
+    updatedHabits[habitIndex] = updatedHabit;
+    
+    set({ habits: updatedHabits });
+    await saveHabitsToStorage(updatedHabits);
+  },
+
+  undoHabitCompletion: async (id) => {
+    const habits = get().habits;
+    const habitIndex = habits.findIndex((h) => h.id === id);
+    
+    if (habitIndex === -1) return;
+
+    const habit = habits[habitIndex];
+    
+    // Only allow undo if completed today
+    if (!habit.completedToday || !isToday(habit.lastCompleted)) {
+      return;
+    }
+
+    const { streak, lastCompleted } = computeStreakAfterUndo(habit);
+
+    const updatedHabit: Habit = {
+      ...habit,
+      completedToday: false,
+      lastCompleted,
+      streak,
     };
 
     const updatedHabits = [...habits];

@@ -30,3 +30,9 @@ export function parseISO(dateString: string): Date {
   return new Date(dateString + 'T00:00:00');
 }
 
+export function getYesterdayISO(): string {
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  return formatToISO(yesterday);
+}
+
