@@ -24,8 +24,6 @@ function MainTabs() {
           borderTopWidth: 1,
           borderTopColor: '#E5E7EB',
           paddingTop: 8,
-          paddingBottom: 8,
-          height: 60,
         },
       }}
     >

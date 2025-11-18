@@ -9,6 +9,7 @@ import {
   Switch,
   Platform,
 } from 'react-native';
+import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
 import { EmojiPicker } from '../components/EmojiPicker';
 import { DurationSelector } from '../components/DurationSelector';
@@ -74,16 +75,17 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.cancelButton}>Cancel</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>New Habit</Text>
-        <TouchableOpacity onPress={handleSave}>
-          <Text style={styles.saveButton}>Save</Text>
-        </TouchableOpacity>
-      </View>
+    <ScreenContainer style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.cancelButton}>Cancel</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>New Habit</Text>
+          <TouchableOpacity onPress={handleSave}>
+            <Text style={styles.saveButton}>Save</Text>
+          </TouchableOpacity>
+        </View>
 
       <View style={styles.form}>
         <Text style={styles.label}>Habit Name</Text>
@@ -146,13 +148,13 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
           )}
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#FFFFFF',
   },
   content: {
@@ -163,7 +165,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 60,
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
   },

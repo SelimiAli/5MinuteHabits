@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
 
 interface OnboardingScreenProps {
@@ -27,8 +28,9 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.content}>
+    <ScreenContainer style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.contentInner}>
         <Text style={styles.emoji}>⏱️</Text>
         <Text style={styles.title}>5-Minute Habits</Text>
         <Text style={styles.subtitle}>
@@ -63,22 +65,24 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
         >
           <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
     backgroundColor: '#FFFFFF',
   },
   content: {
-    flex: 1,
+    flexGrow: 1,
     padding: 24,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '100%',
+  },
+  contentInner: {
+    width: '100%',
   },
   emoji: {
     fontSize: 80,

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
+import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
 import { HabitCard } from '../components/HabitCard';
 import { AddButton } from '../components/AddButton';
@@ -61,7 +62,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScreenContainer style={styles.container} edges={['top']}>
       <View style={styles.header}>
         <Text style={styles.title}>My Habits</Text>
         <TouchableOpacity onPress={handleSettings} style={styles.settingsButton}>
@@ -109,13 +110,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       )}
 
       <AddButton onPress={handleAddHabit} />
-    </View>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#F9FAFB',
   },
   header: {
@@ -123,7 +123,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 60,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',

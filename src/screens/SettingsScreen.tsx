@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { ScreenContainer } from '../components/layout/ScreenContainer';
 
 interface SettingsScreenProps {
   navigation: any;
@@ -15,10 +16,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
   navigation,
 }) => {
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Settings</Text>
-      </View>
+    <ScreenContainer style={styles.container} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Settings</Text>
+        </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>About</Text>
@@ -43,13 +45,13 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
           </Text>
         </View>
       </View>
-    </ScrollView>
+      </ScrollView>
+    </ScreenContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#F9FAFB',
   },
   content: {
@@ -57,7 +59,6 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 20,
-    paddingTop: 60,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',

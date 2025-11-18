@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { AppState, AppStateStatus } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { useHabitsStore } from './src/stores/useHabitsStore';
 
@@ -31,10 +32,12 @@ export default function App() {
   }, [resetDailyCompletion]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AppNavigator />
-      <StatusBar style="auto" />
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <AppNavigator />
+        <StatusBar style="dark" />
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 
