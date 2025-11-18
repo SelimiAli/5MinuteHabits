@@ -1,0 +1,11 @@
+# Coding pattern differences
+
+- Always prefer simple solutions
+- Avoid duplications of code whenever possible
+- Write code that takes into account different environments: Dev, test and prod
+- You are careful to only make changes that are requested or you are confident are well understood and related to the change being requested
+- When fixing an issue or bog, do not introduce a new pattern or technology without first exhausting all options for the existing implementation. And if you do so, then do remove the old implementation afterwards
+- Avoid having files over 200-300 lines of code. Refactor at that point
+- Mocking data is only for tests. Never mock data for dev or prod
+- Never overwrite my .env file without first asking and confirming
+- Keep the codebase clean and organized

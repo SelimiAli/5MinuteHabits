@@ -1,0 +1,87 @@
+import React, { useEffect } from 'react';
+import { Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useHabitsStore } from '../stores/useHabitsStore';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { HomeScreen } from '../screens/HomeScreen';
+import { SettingsScreen } from '../screens/SettingsScreen';
+import { AddHabitScreen } from '../screens/AddHabitScreen';
+import { EditHabitScreen } from '../screens/EditHabitScreen';
+
+const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function MainTabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: '#065F46',
+        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarStyle: {
+          borderTopWidth: 1,
+          borderTopColor: '#E5E7EB',
+          paddingTop: 8,
+          paddingBottom: 8,
+          height: 60,
+        },
+      }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          tabBarLabel: 'Habits',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📝</Text>,
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarLabel: 'Settings',
+          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⚙️</Text>,
+        }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+export function AppNavigator() {
+  const { hasCompletedOnboarding, loadHabits, habits, isLoading } =
+    useHabitsStore();
+
+  useEffect(() => {
+    loadHabits();
+  }, []);
+
+  // Show onboarding if not completed and no habits exist
+  const showOnboarding = !hasCompletedOnboarding && habits.length === 0;
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {showOnboarding ? (
+          <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        ) : (
+          <>
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen
+              name="AddHabit"
+              component={AddHabitScreen}
+              options={{ presentation: 'modal' }}
+            />
+            <Stack.Screen
+              name="EditHabit"
+              component={EditHabitScreen}
+              options={{ presentation: 'modal' }}
+            />
+          </>
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
