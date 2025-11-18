@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import { useHabitsStore } from '../stores/useHabitsStore';
 import { HabitCard } from '../components/HabitCard';
 import { AddButton } from '../components/AddButton';
+import { CompleteAction } from '../components/swipeActions/CompleteAction';
+import { UndoAction } from '../components/swipeActions/UndoAction';
 import { useFocusEffect } from '@react-navigation/native';
+import { isToday } from '../lib/date';
 
 interface HomeScreenProps {
   navigation: any;
@@ -18,6 +22,7 @@ interface HomeScreenProps {
 export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { habits, loadHabits, completeHabit, undoHabitCompletion, resetDailyCompletion } =
     useHabitsStore();
+  const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({});
 
   useFocusEffect(
     React.useCallback(() => {
@@ -32,10 +37,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   const handleComplete = (id: string) => {
     completeHabit(id);
+    // Close swipeable after action
+    swipeableRefs.current[id]?.close();
   };
 
   const handleUndo = (id: string) => {
     undoHabitCompletion(id);
+    // Close swipeable after action
+    swipeableRefs.current[id]?.close();
   };
 
   const handleEdit = (habitId: string) => {
@@ -73,15 +82,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
         >
-          {habits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              habit={habit}
-              onComplete={() => handleComplete(habit.id)}
-              onUndo={() => handleUndo(habit.id)}
-              onPress={() => handleEdit(habit.id)}
-            />
-          ))}
+          {habits.map((habit) => {
+            const isCompleted = habit.completedToday;
+            const canUndo = isCompleted && isToday(habit.lastCompleted);
+
+            return (
+              <Swipeable
+                key={habit.id}
+                ref={(ref) => {
+                  swipeableRefs.current[habit.id] = ref;
+                }}
+                renderLeftActions={
+                  !isCompleted ? () => <CompleteAction /> : undefined
+                }
+                onSwipeableLeftOpen={() => handleComplete(habit.id)}
+                renderRightActions={
+                  canUndo ? () => <UndoAction /> : undefined
+                }
+                onSwipeableRightOpen={() => handleUndo(habit.id)}
+              >
+                <HabitCard habit={habit} onPress={() => handleEdit(habit.id)} />
+              </Swipeable>
+            );
+          })}
         </ScrollView>
       )}
 

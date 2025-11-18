@@ -1,29 +1,19 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Habit } from '../types';
-import { isToday } from '../lib/date';
 
 interface HabitCardProps {
   habit: Habit;
-  onComplete: () => void;
-  onUndo?: () => void;
   onPress: () => void;
 }
 
-export const HabitCard: React.FC<HabitCardProps> = ({
-  habit,
-  onComplete,
-  onUndo,
-  onPress,
-}) => {
+export const HabitCard: React.FC<HabitCardProps> = ({ habit, onPress }) => {
   const isCompleted = habit.completedToday;
-  const canUndo = isCompleted && isToday(habit.lastCompleted) && onUndo;
 
   return (
     <TouchableOpacity
       style={[styles.card, isCompleted && styles.cardCompleted]}
       onPress={onPress}
-      disabled={isCompleted}
       activeOpacity={0.7}
     >
       <View style={styles.content}>
@@ -41,34 +31,11 @@ export const HabitCard: React.FC<HabitCardProps> = ({
           </View>
         </View>
 
-        {!isCompleted && (
-          <TouchableOpacity
-            style={styles.completeButton}
-            onPress={(e) => {
-              e.stopPropagation();
-              onComplete();
-            }}
-          >
-            <Text style={styles.completeButtonText}>Complete</Text>
-          </TouchableOpacity>
-        )}
-
         {isCompleted && (
           <View style={styles.completedContainer}>
             <View style={styles.completedBadge}>
               <Text style={styles.completedText}>✓ Completed</Text>
             </View>
-            {canUndo && (
-              <TouchableOpacity
-                style={styles.undoButton}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  onUndo();
-                }}
-              >
-                <Text style={styles.undoButtonText}>↩️ Undo</Text>
-              </TouchableOpacity>
-            )}
           </View>
         )}
       </View>
@@ -133,21 +100,9 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontWeight: '500',
   },
-  completeButton: {
-    backgroundColor: '#A7F3D0',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 12,
-  },
-  completeButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#065F46',
-  },
   completedContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   completedBadge: {
     backgroundColor: '#86EFAC',
@@ -159,17 +114,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#065F46',
-  },
-  undoButton: {
-    backgroundColor: '#FEE2E2',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 12,
-  },
-  undoButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#991B1B',
   },
 });
 
