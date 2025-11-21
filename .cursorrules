@@ -9,3 +9,4 @@
 - Mocking data is only for tests. Never mock data for dev or prod
 - Never overwrite my .env file without first asking and confirming
 - Keep the codebase clean and organized
+- Do not run commands or start servers - the user will do that themselves

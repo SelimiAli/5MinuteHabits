@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { Habit } from '../types';
 
 interface HabitCardProps {
@@ -9,37 +9,87 @@ interface HabitCardProps {
 
 export const HabitCard: React.FC<HabitCardProps> = ({ habit, onPress }) => {
   const isCompleted = habit.completedToday;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    if (isCompleted) {
+      // Smooth scale and fade animation on completion
+      Animated.parallel([
+        Animated.sequence([
+          Animated.spring(scaleAnim, {
+            toValue: 1.05,
+            useNativeDriver: true,
+            friction: 3,
+            tension: 40,
+          }),
+          Animated.spring(scaleAnim, {
+            toValue: 1,
+            useNativeDriver: true,
+            friction: 5,
+            tension: 40,
+          }),
+        ]),
+        Animated.timing(fadeAnim, {
+          toValue: 0.8,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      // Reset animation when uncompleted
+      Animated.parallel([
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          useNativeDriver: true,
+          friction: 5,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [isCompleted, scaleAnim, fadeAnim]);
 
   return (
-    <TouchableOpacity
-      style={[styles.card, isCompleted && styles.cardCompleted]}
-      onPress={onPress}
-      activeOpacity={0.7}
+    <Animated.View
+      style={{
+        transform: [{ scale: scaleAnim }],
+        opacity: fadeAnim,
+      }}
     >
-      <View style={styles.content}>
-        <View style={styles.header}>
-          <Text style={styles.emoji}>{habit.emoji}</Text>
-          <View style={styles.info}>
-            <Text style={styles.name}>{habit.name}</Text>
-            <View style={styles.meta}>
-              <Text style={styles.duration}>{habit.duration}m</Text>
-              <Text style={styles.separator}>•</Text>
-              <Text style={styles.streak}>
-                🔥 {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
-              </Text>
+      <TouchableOpacity
+        style={[styles.card, isCompleted && styles.cardCompleted]}
+        onPress={onPress}
+        activeOpacity={0.7}
+      >
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text style={styles.emoji}>{habit.emoji}</Text>
+            <View style={styles.info}>
+              <Text style={styles.name}>{habit.name}</Text>
+              <View style={styles.meta}>
+                <Text style={styles.duration}>{habit.duration}m</Text>
+                <Text style={styles.separator}>•</Text>
+                <Text style={styles.streak}>
+                  🔥 {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        {isCompleted && (
-          <View style={styles.completedContainer}>
-            <View style={styles.completedBadge}>
-              <Text style={styles.completedText}>✓ Completed</Text>
+          {isCompleted && (
+            <View style={styles.completedContainer}>
+              <View style={styles.completedBadge}>
+                <Text style={styles.completedText}>✓ Completed</Text>
+              </View>
             </View>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
+          )}
+        </View>
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 

@@ -149,8 +149,13 @@ export const useHabitsStore = create<HabitsStore>((set, get) => ({
     const updatedHabits = [...habits];
     updatedHabits[habitIndex] = updatedHabit;
     
+    // Optimistic update - set state immediately
     set({ habits: updatedHabits });
-    await saveHabitsToStorage(updatedHabits);
+    
+    // Save to storage in background (non-blocking)
+    saveHabitsToStorage(updatedHabits).catch((error) => {
+      console.error('Error saving habit completion:', error);
+    });
   },
 
   undoHabitCompletion: async (id) => {
@@ -178,8 +183,13 @@ export const useHabitsStore = create<HabitsStore>((set, get) => ({
     const updatedHabits = [...habits];
     updatedHabits[habitIndex] = updatedHabit;
     
+    // Optimistic update - set state immediately
     set({ habits: updatedHabits });
-    await saveHabitsToStorage(updatedHabits);
+    
+    // Save to storage in background (non-blocking)
+    saveHabitsToStorage(updatedHabits).catch((error) => {
+      console.error('Error saving undo:', error);
+    });
   },
 
   resetDailyCompletion: async () => {

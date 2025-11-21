@@ -43,3 +43,22 @@ export async function saveOnboardingStatus(completed: boolean): Promise<void> {
   }
 }
 
+const DAILY_REMINDER_TIME_KEY = 'dailyReminderTime';
+
+export async function loadDailyReminderTime(): Promise<string | null> {
+  try {
+    return await AsyncStorage.getItem(DAILY_REMINDER_TIME_KEY);
+  } catch (error) {
+    console.error('Error loading daily reminder time:', error);
+    return null;
+  }
+}
+
+export async function saveDailyReminderTime(time: string): Promise<void> {
+  try {
+    await AsyncStorage.setItem(DAILY_REMINDER_TIME_KEY, time);
+  } catch (error) {
+    console.error('Error saving daily reminder time:', error);
+  }
+}
+

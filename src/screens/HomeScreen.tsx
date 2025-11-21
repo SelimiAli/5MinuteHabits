@@ -15,6 +15,7 @@ import { CompleteAction } from '../components/swipeActions/CompleteAction';
 import { UndoAction } from '../components/swipeActions/UndoAction';
 import { useFocusEffect } from '@react-navigation/native';
 import { isToday } from '../lib/date';
+import { playCompletionSound, initializeSound } from '../lib/sound';
 
 interface HomeScreenProps {
   navigation: any;
@@ -34,10 +35,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     loadHabits();
+    initializeSound();
   }, []);
 
   const handleComplete = (id: string) => {
     completeHabit(id);
+    playCompletionSound();
     // Close swipeable after action
     swipeableRefs.current[id]?.close();
   };
