@@ -98,7 +98,6 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
           value={name}
           onChangeText={setName}
           maxLength={40}
-          autoFocus
         />
         <Text style={styles.charCount}>{name.length}/40</Text>
 
