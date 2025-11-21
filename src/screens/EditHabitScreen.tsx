@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
-import { EmojiPicker } from '../components/EmojiPicker';
+import { IconPicker } from '../components/IconPicker';
 import { DurationSelector } from '../components/DurationSelector';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -33,7 +33,8 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
   const habit = habits.find((h) => h.id === habitId);
 
   const [name, setName] = useState(habit?.name || '');
-  const [emoji, setEmoji] = useState(habit?.emoji || '😊');
+  const [icon, setIcon] = useState(habit?.icon || 'check-circle');
+  const [iconColor, setIconColor] = useState(habit?.iconColor || '#065F46');
   const [duration, setDuration] = useState<1 | 2 | 3 | 4 | 5>(
     habit?.duration || 5
   );
@@ -85,7 +86,9 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
 
     await updateHabit(habitId, {
       name: name.trim(),
-      emoji,
+      emoji: '✓', // Kept for backward compatibility
+      icon,
+      iconColor,
       duration,
       reminderEnabled,
       reminderTime: timeString,
@@ -151,9 +154,16 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
         />
         <Text style={styles.charCount}>{name.length}/40</Text>
 
-        <Text style={styles.label}>Emoji</Text>
-        <View style={styles.emojiContainer}>
-          <EmojiPicker selectedEmoji={emoji} onSelect={setEmoji} />
+        <Text style={styles.label}>Icon</Text>
+        <View style={styles.iconPickerContainer}>
+          <IconPicker
+            selectedIcon={icon}
+            selectedColor={iconColor}
+            onSelect={(newIcon, newColor) => {
+              setIcon(newIcon);
+              setIconColor(newColor);
+            }}
+          />
         </View>
 
         <Text style={styles.label}>Duration</Text>
@@ -266,7 +276,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 4,
   },
-  emojiContainer: {
+  iconPickerContainer: {
     alignItems: 'center',
   },
   reminderSection: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Habit } from '../types';
 
 interface HabitCardProps {
@@ -67,15 +68,33 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onPress }) => {
       >
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={styles.emoji}>{habit.emoji}</Text>
+            <View
+              style={[
+                styles.iconContainer,
+                { backgroundColor: (habit.iconColor || '#065F46') + '20' },
+              ]}
+            >
+              <MaterialCommunityIcons
+                name={(habit.icon || 'check-circle') as any}
+                size={28}
+                color={habit.iconColor || '#065F46'}
+              />
+            </View>
             <View style={styles.info}>
               <Text style={styles.name}>{habit.name}</Text>
               <View style={styles.meta}>
                 <Text style={styles.duration}>{habit.duration}m</Text>
                 <Text style={styles.separator}>•</Text>
-                <Text style={styles.streak}>
-                  🔥 {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
-                </Text>
+                <View style={styles.streakContainer}>
+                  <MaterialCommunityIcons
+                    name="fire"
+                    size={16}
+                    color="#EA580C"
+                  />
+                  <Text style={styles.streak}>
+                    {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
@@ -83,7 +102,12 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onPress }) => {
           {isCompleted && (
             <View style={styles.completedContainer}>
               <View style={styles.completedBadge}>
-                <Text style={styles.completedText}>✓ Completed</Text>
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  size={16}
+                  color="#065F46"
+                />
+                <Text style={styles.completedText}>Completed</Text>
               </View>
             </View>
           )}
@@ -119,8 +143,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-  emoji: {
-    fontSize: 40,
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: 12,
   },
   info: {
@@ -145,6 +173,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#D1D5DB',
   },
+  streakContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
   streak: {
     fontSize: 14,
     color: '#6B7280',
@@ -155,6 +188,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   completedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
     backgroundColor: '#86EFAC',
     paddingHorizontal: 16,
     paddingVertical: 8,

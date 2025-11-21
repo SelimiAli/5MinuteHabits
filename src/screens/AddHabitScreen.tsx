@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
-import { EmojiPicker } from '../components/EmojiPicker';
+import { IconPicker } from '../components/IconPicker';
 import { DurationSelector } from '../components/DurationSelector';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
@@ -30,7 +30,8 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
   const isFirstHabit = route?.params?.isFirstHabit || false;
 
   const [name, setName] = useState('');
-  const [emoji, setEmoji] = useState('😊');
+  const [icon, setIcon] = useState('check-circle');
+  const [iconColor, setIconColor] = useState('#065F46');
   const [duration, setDuration] = useState<1 | 2 | 3 | 4 | 5>(5);
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState(new Date());
@@ -60,7 +61,9 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
 
     await addHabit({
       name: name.trim(),
-      emoji,
+      emoji: '✓', // Kept for backward compatibility
+      icon,
+      iconColor,
       duration,
       reminderEnabled,
       reminderTime: timeString,
@@ -109,9 +112,16 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
         />
         <Text style={styles.charCount}>{name.length}/40</Text>
 
-        <Text style={styles.label}>Emoji</Text>
-        <View style={styles.emojiContainer}>
-          <EmojiPicker selectedEmoji={emoji} onSelect={setEmoji} />
+        <Text style={styles.label}>Icon</Text>
+        <View style={styles.iconPickerContainer}>
+          <IconPicker
+            selectedIcon={icon}
+            selectedColor={iconColor}
+            onSelect={(newIcon, newColor) => {
+              setIcon(newIcon);
+              setIconColor(newColor);
+            }}
+          />
         </View>
 
         <Text style={styles.label}>Duration</Text>
@@ -217,7 +227,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginTop: 4,
   },
-  emojiContainer: {
+  iconPickerContainer: {
     alignItems: 'center',
   },
   reminderSection: {

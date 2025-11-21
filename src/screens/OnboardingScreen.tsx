@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
 
@@ -27,7 +28,13 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
     <ScreenContainer style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.contentInner}>
-        <Text style={styles.emoji}>⏱️</Text>
+        <View style={styles.iconContainer}>
+          <MaterialCommunityIcons
+            name="timer-outline"
+            size={80}
+            color="#065F46"
+          />
+        </View>
         <Text style={styles.title}>5-Minute Habits</Text>
         <Text style={styles.subtitle}>
           Build lasting habits, one small step at a time
@@ -35,19 +42,37 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
 
         <View style={styles.features}>
           <View style={styles.feature}>
-            <Text style={styles.featureEmoji}>🎯</Text>
+            <View style={styles.featureIconContainer}>
+              <MaterialCommunityIcons
+                name="bullseye-arrow"
+                size={32}
+                color="#065F46"
+              />
+            </View>
             <Text style={styles.featureText}>
               Track tiny habits that take just 1-5 minutes
             </Text>
           </View>
           <View style={styles.feature}>
-            <Text style={styles.featureEmoji}>🔥</Text>
+            <View style={styles.featureIconContainer}>
+              <MaterialCommunityIcons
+                name="fire"
+                size={32}
+                color="#EA580C"
+              />
+            </View>
             <Text style={styles.featureText}>
               Build streaks and watch your progress grow
             </Text>
           </View>
           <View style={styles.feature}>
-            <Text style={styles.featureEmoji}>🔔</Text>
+            <View style={styles.featureIconContainer}>
+              <MaterialCommunityIcons
+                name="bell-outline"
+                size={32}
+                color="#065F46"
+              />
+            </View>
             <Text style={styles.featureText}>
               Set reminders to never miss a day
             </Text>
@@ -80,8 +105,7 @@ const styles = StyleSheet.create({
   contentInner: {
     width: '100%',
   },
-  emoji: {
-    fontSize: 80,
+  iconContainer: {
     marginBottom: 24,
   },
   title: {
@@ -108,8 +132,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     paddingHorizontal: 16,
   },
-  featureEmoji: {
-    fontSize: 32,
+  featureIconContainer: {
     marginRight: 16,
   },
   featureText: {

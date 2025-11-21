@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -32,7 +32,13 @@ function MainTabs() {
         component={HomeScreen}
         options={{
           tabBarLabel: 'Habits',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>📝</Text>,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons
+              name="clipboard-check-outline"
+              size={24}
+              color={color}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -40,7 +46,9 @@ function MainTabs() {
         component={SettingsScreen}
         options={{
           tabBarLabel: 'Settings',
-          tabBarIcon: ({ color }) => <Text style={{ fontSize: 24 }}>⚙️</Text>,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="cog" size={24} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>

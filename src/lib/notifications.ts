@@ -39,8 +39,8 @@ export async function scheduleHabitReminder(habit: Habit): Promise<string | null
     // Schedule daily repeating notification
     const notificationId = await Notifications.scheduleNotificationAsync({
       content: {
-        title: '5-Minute Habit',
-        body: `Time to complete: ${habit.name} ${habit.emoji}`,
+        title: '5-Minute Habit Reminder',
+        body: `Time to complete: ${habit.name}`,
         sound: true,
       },
       trigger: {

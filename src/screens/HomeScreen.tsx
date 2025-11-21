@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
@@ -78,7 +79,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.title}>My Habits</Text>
         <TouchableOpacity onPress={handleSettings} style={styles.settingsButton}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
+          <MaterialCommunityIcons name="cog" size={24} color="#6B7280" />
         </TouchableOpacity>
       </View>
 
@@ -97,7 +98,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
       >
         {habits.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>📝</Text>
+            <View style={styles.emptyIconContainer}>
+              <MaterialCommunityIcons
+                name="clipboard-text-outline"
+                size={64}
+                color="#D1D5DB"
+              />
+            </View>
             <Text style={styles.emptyText}>No habits yet</Text>
             <Text style={styles.emptySubtext}>
               Tap the + button to create your first habit
@@ -159,9 +166,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  settingsIcon: {
-    fontSize: 24,
-  },
   scrollView: {
     flex: 1,
   },
@@ -176,8 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 40,
   },
-  emptyEmoji: {
-    fontSize: 64,
+  emptyIconContainer: {
     marginBottom: 16,
   },
   emptyText: {
