@@ -16,15 +16,11 @@ interface OnboardingScreenProps {
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = ({
   navigation,
 }) => {
-  const { habits, setHasCompletedOnboarding } = useHabitsStore();
+  const { setHasCompletedOnboarding } = useHabitsStore();
 
   const handleGetStarted = async () => {
-    if (habits.length === 0) {
-      navigation.navigate('AddHabit', { isFirstHabit: true });
-    } else {
-      await setHasCompletedOnboarding(true);
-      navigation.replace('MainTabs');
-    }
+    await setHasCompletedOnboarding(true);
+    navigation.replace('MainTabs');
   };
 
   return (
