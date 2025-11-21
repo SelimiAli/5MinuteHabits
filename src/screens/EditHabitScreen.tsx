@@ -53,7 +53,7 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
     if (!habit) {
       navigation.goBack();
     }
-  }, [habit]);
+  }, [habit, navigation]);
 
   if (!habit) {
     return null;
@@ -97,9 +97,13 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: async () => {
-            await deleteHabit(habitId);
+          onPress: () => {
+            // Navigate back first to avoid rendering issues
             navigation.goBack();
+            // Delete habit after navigation
+            setTimeout(() => {
+              deleteHabit(habitId);
+            }, 100);
           },
         },
       ]
