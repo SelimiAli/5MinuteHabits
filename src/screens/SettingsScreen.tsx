@@ -83,7 +83,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 
   return (
     <ScreenContainer
-      style={[styles.container, { backgroundColor: containerBackgroundColor }]}
+      style={[styles.container, { backgroundColor: containerBackgroundColor }] as any}
       edges={['top']}
     >
       <ScrollView

@@ -76,7 +76,10 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
 
   return (
     <ScreenContainer style={styles.container}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        alwaysBounceVertical={true}
+      >
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.cancelButton}>Cancel</Text>
@@ -158,6 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   content: {
+    flexGrow: 1,
     paddingBottom: 40,
   },
   header: {
