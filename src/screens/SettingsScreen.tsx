@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Platform,
   useColorScheme,
+  RefreshControl,
 } from 'react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -31,6 +32,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
     return defaultTime;
   });
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadReminderTime();
@@ -45,6 +47,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       setReminderTime(date);
     }
   };
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await loadReminderTime();
+    setRefreshing(false);
+  }, []);
 
   const handleTimeChange = async (event: any, selectedTime?: Date) => {
     setShowTimePicker(Platform.OS === 'ios');
@@ -78,7 +86,18 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
       style={[styles.container, { backgroundColor: containerBackgroundColor }]}
       edges={['top']}
     >
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#065F46"
+            colors={['#065F46']}
+          />
+        }
+        alwaysBounceVertical={true}
+      >
         <View style={[styles.header, { backgroundColor, borderBottomColor: borderColor }]}>
           <Text style={[styles.title, { color: textColor }]}>Settings</Text>
         </View>
@@ -150,6 +169,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFB',
   },
   content: {
+    flexGrow: 1,
     paddingBottom: 40,
   },
   header: {

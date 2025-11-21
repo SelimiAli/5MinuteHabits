@@ -1,10 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
@@ -25,6 +26,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const { habits, loadHabits, completeHabit, undoHabitCompletion, resetDailyCompletion } =
     useHabitsStore();
   const swipeableRefs = useRef<{ [key: string]: Swipeable | null }>({});
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await loadHabits();
+    resetDailyCompletion();
+    setRefreshing(false);
+  }, [loadHabits, resetDailyCompletion]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -73,20 +82,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {habits.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyEmoji}>📝</Text>
-          <Text style={styles.emptyText}>No habits yet</Text>
-          <Text style={styles.emptySubtext}>
-            Tap the + button to create your first habit
-          </Text>
-        </View>
-      ) : (
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-        >
-          {habits.map((habit) => {
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#065F46"
+            colors={['#065F46']}
+          />
+        }
+        alwaysBounceVertical={true}
+      >
+        {habits.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyEmoji}>📝</Text>
+            <Text style={styles.emptyText}>No habits yet</Text>
+            <Text style={styles.emptySubtext}>
+              Tap the + button to create your first habit
+            </Text>
+          </View>
+        ) : (
+          habits.map((habit) => {
             const isCompleted = habit.completedToday;
             const canUndo = isCompleted && isToday(habit.lastCompleted);
 
@@ -108,9 +126,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 <HabitCard habit={habit} onPress={() => handleEdit(habit.id)} />
               </Swipeable>
             );
-          })}
-        </ScrollView>
-      )}
+          })
+        )}
+      </ScrollView>
 
       <AddButton onPress={handleAddHabit} />
     </ScreenContainer>
@@ -148,6 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
+    flexGrow: 1,
     padding: 20,
     paddingBottom: 100,
   },
