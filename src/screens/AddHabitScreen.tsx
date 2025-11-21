@@ -8,6 +8,8 @@ import {
   ScrollView,
   Switch,
   Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
@@ -33,6 +35,10 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [reminderTime, setReminderTime] = useState(new Date());
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const handleCancel = () => {
+    navigation.goBack();
+  };
 
   const handleSave = async () => {
     // Validation
@@ -79,9 +85,11 @@ export const AddHabitScreen: React.FC<AddHabitScreenProps> = ({
       <ScrollView
         contentContainerStyle={styles.content}
         alwaysBounceVertical={true}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={handleCancel}>
             <Text style={styles.cancelButton}>Cancel</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>New Habit</Text>

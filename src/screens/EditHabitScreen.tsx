@@ -9,6 +9,8 @@ import {
   Switch,
   Platform,
   Alert,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import { useHabitsStore } from '../stores/useHabitsStore';
@@ -58,6 +60,10 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
   if (!habit) {
     return null;
   }
+
+  const handleCancel = () => {
+    navigation.goBack();
+  };
 
   const handleSave = async () => {
     // Validation
@@ -121,9 +127,11 @@ export const EditHabitScreen: React.FC<EditHabitScreenProps> = ({
       <ScrollView
         contentContainerStyle={styles.content}
         alwaysBounceVertical={true}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       >
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={handleCancel}>
             <Text style={styles.cancelButton}>Cancel</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Edit Habit</Text>
