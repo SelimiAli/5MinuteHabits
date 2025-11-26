@@ -5,6 +5,7 @@ import {
   saveHabitsToStorage,
   loadOnboardingStatus,
   saveOnboardingStatus,
+  loadUserFromStorage,
 } from '../utils/storage';
 import { getTodayISO, isToday } from '../lib/date';
 import { checkStreak, computeStreakAfterUndo } from '../lib/streak';
@@ -46,6 +47,9 @@ export const useHabitsStore = create<HabitsStore>((set, get) => ({
   },
 
   addHabit: async (habitData) => {
+    // Get current user ID
+    const user = await loadUserFromStorage();
+    
     const newHabit: Habit = {
       ...habitData,
       id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
@@ -54,6 +58,7 @@ export const useHabitsStore = create<HabitsStore>((set, get) => ({
       completedToday: false,
       lastCompleted: null,
       notificationId: undefined,
+      userId: user?.id, // Associate habit with current user
     };
 
     // Schedule notification if reminder is enabled
