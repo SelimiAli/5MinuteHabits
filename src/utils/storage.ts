@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Habit } from '../types';
+import { Habit, User } from '../types';
 
 const HABITS_STORAGE_KEY = 'habits';
 const ONBOARDING_STORAGE_KEY = 'hasCompletedOnboarding';
@@ -62,3 +62,34 @@ export async function saveDailyReminderTime(time: string): Promise<void> {
   }
 }
 
+// User storage functions
+const USER_STORAGE_KEY = 'currentUser';
+
+export async function loadUserFromStorage(): Promise<User | null> {
+  try {
+    const data = await AsyncStorage.getItem(USER_STORAGE_KEY);
+    if (data) {
+      return JSON.parse(data);
+    }
+    return null;
+  } catch (error) {
+    console.error('Error loading user from storage:', error);
+    return null;
+  }
+}
+
+export async function saveUserToStorage(user: User): Promise<void> {
+  try {
+    await AsyncStorage.setItem(USER_STORAGE_KEY, JSON.stringify(user));
+  } catch (error) {
+    console.error('Error saving user to storage:', error);
+  }
+}
+
+export async function removeUserFromStorage(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(USER_STORAGE_KEY);
+  } catch (error) {
+    console.error('Error removing user from storage:', error);
+  }
+}

@@ -12,5 +12,18 @@ export type Habit = {
   longestStreak: number;
   completedToday: boolean;
   lastCompleted: string | null; // ISO string (YYYY-MM-DD)
+  userId?: string; // User ID for multi-user support
 };
 
+export type User = {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: string; // ISO string
+};
+
+export type AuthState = {
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+};

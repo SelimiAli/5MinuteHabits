@@ -4,7 +4,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useHabitsStore } from '../stores/useHabitsStore';
+import { useAuthStore } from '../stores/useAuthStore';
 import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { LoginScreen } from '../screens/LoginScreen';
+import { SignupScreen } from '../screens/SignupScreen';
 import { HomeScreen } from '../screens/HomeScreen';
 import { SettingsScreen } from '../screens/SettingsScreen';
 import { AddHabitScreen } from '../screens/AddHabitScreen';
@@ -56,22 +59,36 @@ function MainTabs() {
 }
 
 export function AppNavigator() {
-  const { hasCompletedOnboarding, loadHabits, habits, isLoading } =
-    useHabitsStore();
+  const { hasCompletedOnboarding, loadHabits, habits } = useHabitsStore();
+  const { isAuthenticated, loadUser } = useAuthStore();
 
   useEffect(() => {
+    loadUser();
     loadHabits();
   }, []);
 
-  // Show onboarding if not completed and no habits exist
-  const showOnboarding = !hasCompletedOnboarding && habits.length === 0;
+  // Determine initial route based on auth state
+  const getInitialRoute = () => {
+    if (!isAuthenticated) {
+      return 'Login';
+    }
+    if (!hasCompletedOnboarding && habits.length === 0) {
+      return 'Onboarding';
+    }
+    return 'MainTabs';
+  };
 
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName={showOnboarding ? 'Onboarding' : 'MainTabs'}
+        initialRouteName={getInitialRoute()}
       >
+        {/* Auth Screens */}
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        
+        {/* App Screens */}
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen
