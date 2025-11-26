@@ -8,13 +8,16 @@ import {
   Platform,
   useColorScheme,
   RefreshControl,
+  Alert,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   loadDailyReminderTime,
   saveDailyReminderTime,
 } from '../utils/storage';
+import { useAuthStore } from '../stores/useAuthStore';
 
 interface SettingsScreenProps {
   navigation: any;
@@ -25,6 +28,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
 }) => {
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
+  const { user, logout } = useAuthStore();
 
   const [reminderTime, setReminderTime] = useState<Date>(() => {
     const defaultTime = new Date();
@@ -101,6 +105,46 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = ({
         <View style={[styles.header, { backgroundColor, borderBottomColor: borderColor }]}>
           <Text style={[styles.title, { color: textColor }]}>Settings</Text>
         </View>
+
+        {user && (
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>
+              Account
+            </Text>
+            <View style={[styles.infoCard, { backgroundColor, borderColor }]}>
+              <View style={styles.userInfo}>
+                <MaterialCommunityIcons name="account-circle" size={48} color="#065F46" />
+                <View style={styles.userDetails}>
+                  <Text style={[styles.userName, { color: textColor }]}>{user.name}</Text>
+                  <Text style={[styles.userEmail, { color: secondaryTextColor }]}>{user.email}</Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={() => {
+                  Alert.alert(
+                    'Logout',
+                    'Are you sure you want to logout?',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Logout',
+                        style: 'destructive',
+                        onPress: () => {
+                          logout();
+                          navigation.navigate('Login');
+                        },
+                      },
+                    ]
+                  );
+                }}
+              >
+                <MaterialCommunityIcons name="logout" size={20} color="#DC2626" />
+                <Text style={styles.logoutText}>Logout</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
 
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: sectionTitleColor }]}>
@@ -245,6 +289,39 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#374151',
     lineHeight: 24,
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  userDetails: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#111827',
+  },
+  userEmail: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 12,
+    borderRadius: 8,
+    backgroundColor: '#FEE2E2',
+  },
+  logoutText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#DC2626',
+    marginLeft: 8,
   },
 });
 
