@@ -8,13 +8,15 @@ import {
   RefreshControl,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Swipeable } from 'react-native-gesture-handler';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
-import { useHabitsStore } from '../stores/useHabitsStore';
 import { HabitCard } from '../components/HabitCard';
 import { AddButton } from '../components/AddButton';
+import { useHabitsStore } from '../stores/useHabitsStore';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { CompleteAction } from '../components/swipeActions/CompleteAction';
 import { UndoAction } from '../components/swipeActions/UndoAction';
+import { colors, shadows, borderRadius, spacing, gradients } from '../theme/colors';
 import { useFocusEffect } from '@react-navigation/native';
 import { isToday } from '../lib/date';
 import { playCompletionSound, initializeSound } from '../lib/sound';
@@ -51,13 +53,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const handleComplete = (id: string) => {
     completeHabit(id);
     playCompletionSound();
-    // Close swipeable after action
     swipeableRefs.current[id]?.close();
   };
 
   const handleUndo = (id: string) => {
     undoHabitCompletion(id);
-    // Close swipeable after action
     swipeableRefs.current[id]?.close();
   };
 
@@ -69,130 +69,171 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     navigation.navigate('AddHabit');
   };
 
-  const handleSettings = () => {
-    // Settings is in the tab navigator, just switch tabs
-    navigation.navigate('Settings');
-  };
-
   return (
-    <ScreenContainer style={styles.container} edges={['top']}>
-      <View style={styles.header}>
-        <Text style={styles.title}>My Habits</Text>
-        <TouchableOpacity onPress={handleSettings} style={styles.settingsButton}>
-          <MaterialCommunityIcons name="cog" size={24} color="#6B7280" />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="#065F46"
-            colors={['#065F46']}
-          />
-        }
-        alwaysBounceVertical={true}
-      >
-        {habits.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIconContainer}>
-              <MaterialCommunityIcons
-                name="clipboard-text-outline"
-                size={64}
-                color="#D1D5DB"
-              />
+    <LinearGradient
+      colors={gradients.background as any}
+      style={{ flex: 1 }}
+    >
+      <ScreenContainer style={styles.container}>
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.95)', 'rgba(255, 255, 255, 0.85)'] as any}
+          style={styles.header}
+        >
+          <View style={styles.headerContent}>
+            <View>
+              <Text style={styles.greeting}>Your Habits</Text>
+              <Text style={styles.subtitle}>
+                {habits.filter(h => h.completedToday).length} of {habits.length} completed today
+              </Text>
             </View>
-            <Text style={styles.emptyText}>No habits yet</Text>
-            <Text style={styles.emptySubtext}>
-              Tap the + button to create your first habit
-            </Text>
-          </View>
-        ) : (
-          habits.map((habit) => {
-            const isCompleted = habit.completedToday;
-            const canUndo = isCompleted && isToday(habit.lastCompleted);
-
-            return (
-              <Swipeable
-                key={habit.id}
-                ref={(ref) => {
-                  swipeableRefs.current[habit.id] = ref;
-                }}
-                renderLeftActions={
-                  !isCompleted ? () => <CompleteAction /> : undefined
-                }
-                onSwipeableLeftOpen={() => handleComplete(habit.id)}
-                renderRightActions={
-                  canUndo ? () => <UndoAction /> : undefined
-                }
-                onSwipeableRightOpen={() => handleUndo(habit.id)}
+            <TouchableOpacity
+              style={styles.settingsButton}
+              onPress={() => navigation.navigate('Settings')}
+            >
+              <LinearGradient
+                colors={[colors.primary[500], colors.primary[600]] as any}
+                style={styles.settingsGradient}
               >
-                <HabitCard habit={habit} onPress={() => handleEdit(habit.id)} />
-              </Swipeable>
-            );
-          })
-        )}
-      </ScrollView>
+                <MaterialCommunityIcons name="cog" size={22} color={colors.white} />
+              </LinearGradient>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
 
-      <AddButton onPress={handleAddHabit} />
-    </ScreenContainer>
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.primary[600]}
+              colors={[colors.primary[600]]}
+            />
+          }
+          alwaysBounceVertical={true}
+        >
+          {habits.length === 0 ? (
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconContainer}>
+                <MaterialCommunityIcons
+                  name="clipboard-text-outline"
+                  size={64}
+                  color={colors.primary[400]}
+                />
+              </View>
+              <Text style={styles.emptyText}>No habits yet</Text>
+              <Text style={styles.emptySubtext}>
+                Tap the + button to create your first habit
+              </Text>
+            </View>
+          ) : (
+            habits.map((habit) => {
+              const isCompleted = habit.completedToday;
+              const canUndo = isCompleted && isToday(habit.lastCompleted);
+
+              return (
+                <Swipeable
+                  key={habit.id}
+                  ref={(ref) => {
+                    swipeableRefs.current[habit.id] = ref;
+                  }}
+                  renderLeftActions={
+                    !isCompleted ? () => <CompleteAction /> : undefined
+                  }
+                  onSwipeableLeftOpen={() => handleComplete(habit.id)}
+                  renderRightActions={
+                    canUndo ? () => <UndoAction /> : undefined
+                  }
+                  onSwipeableRightOpen={() => handleUndo(habit.id)}
+                >
+                  <HabitCard habit={habit} onPress={() => handleEdit(habit.id)} />
+                </Swipeable>
+              );
+            })
+          )}
+        </ScrollView>
+
+        <AddButton onPress={handleAddHabit} />
+      </ScreenContainer>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: 'transparent',
   },
   header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    borderBottomLeftRadius: borderRadius.xl,
+    borderBottomRightRadius: borderRadius.xl,
+    ...shadows.md,
+  },
+  headerContent: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#111827',
+  greeting: {
+    fontSize: 32,
+    fontWeight: '800',
+    color: colors.gray[900],
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  subtitle: {
+    fontSize: 15,
+    color: colors.gray[600],
+    fontWeight: '500',
   },
   settingsButton: {
-    width: 40,
-    height: 40,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
+  },
+  settingsGradient: {
+    width: 48,
+    height: 48,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: borderRadius.md,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 20,
+    padding: spacing.lg,
     paddingBottom: 100,
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 40,
+    padding: spacing.xl,
   },
   emptyIconContainer: {
-    marginBottom: 16,
+    marginBottom: spacing.lg,
+    backgroundColor: colors.primary[50],
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   emptyText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#374151',
-    marginBottom: 8,
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.gray[900],
+    marginBottom: spacing.sm,
+    textAlign: 'center',
   },
   emptySubtext: {
     fontSize: 16,
-    color: '#6B7280',
+    color: colors.gray[600],
     textAlign: 'center',
+    lineHeight: 24,
   },
 });
-

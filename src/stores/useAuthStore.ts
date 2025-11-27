@@ -4,23 +4,14 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
-  GoogleAuthProvider,
-  signInWithCredential,
   updateProfile,
   onAuthStateChanged,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import {
   saveUserToStorage,
   removeUserFromStorage,
 } from '../utils/storage';
-
-// Configure Google Sign-In - DISABLED for Expo Go
-// Uncomment when using development build
-// GoogleSignin.configure({
-//   webClientId: '68184488656-1iijovmnb522o167n7tih6vm90ibtulq.apps.googleusercontent.com',
-// });
 
 interface AuthStore {
   user: User | null;
@@ -31,8 +22,6 @@ interface AuthStore {
   loadUser: () => Promise<void>;
   login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
   signup: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string }>;
-  loginWithGoogle: () => Promise<{ success: boolean; error?: string }>;
-  loginWithApple: () => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
 }
 
@@ -180,46 +169,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     }
   },
 
-  loginWithGoogle: async () => {
-    // Google Sign-In requires a development build (not supported in Expo Go)
-    return { 
-      success: false, 
-      error: 'Google Sign-In requires a development build. Use email/password for now.' 
-    };
-  },
-
-  loginWithApple: async () => {
-    set({ isLoading: true });
-
-    try {
-      // Apple Sign-In implementation
-      // Note: This requires @invertase/react-native-apple-authentication
-      // and proper iOS configuration
-      
-      // For now, return not implemented
-      set({ isLoading: false });
-      return { 
-        success: false, 
-        error: 'Apple Sign-In requires additional setup. Check documentation.' 
-      };
-    } catch (error: any) {
-      console.error('Apple login error:', error);
-      set({ isLoading: false });
-      return { success: false, error: 'An error occurred during Apple sign-in' };
-    }
-  },
-
   logout: async () => {
     try {
       await signOut(auth);
       await removeUserFromStorage();
-      
-      // Sign out from Google if signed in (disabled for Expo Go)
-      // try {
-      //   await GoogleSignin.signOut();
-      // } catch (error) {
-      //   // Ignore if not signed in
-      // }
       
       set({ 
         user: null, 

@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, shadows, borderRadius, spacing } from '../theme/colors';
 
 interface DurationSelectorProps {
   selectedDuration: 1 | 2 | 3 | 4 | 5;
@@ -17,20 +19,24 @@ export const DurationSelector: React.FC<DurationSelectorProps> = ({
       {durations.map((duration) => (
         <TouchableOpacity
           key={duration}
-          style={[
-            styles.button,
-            selectedDuration === duration && styles.buttonActive,
-          ]}
+          style={styles.buttonWrapper}
           onPress={() => onSelect(duration)}
+          activeOpacity={0.8}
         >
-          <Text
-            style={[
-              styles.buttonText,
-              selectedDuration === duration && styles.buttonTextActive,
-            ]}
-          >
-            {duration}m
-          </Text>
+          {selectedDuration === duration ? (
+            <LinearGradient
+              colors={[colors.primary[400], colors.primary[600]] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.button}
+            >
+              <Text style={styles.buttonTextActive}>{duration}m</Text>
+            </LinearGradient>
+          ) : (
+            <View style={[styles.button, styles.buttonInactive]}>
+              <Text style={styles.buttonText}>{duration}m</Text>
+            </View>
+          )}
         </TouchableOpacity>
       ))}
     </View>
@@ -40,28 +46,35 @@ export const DurationSelector: React.FC<DurationSelectorProps> = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    gap: 12,
-    marginVertical: 16,
+    gap: spacing.sm,
+    marginVertical: spacing.md,
+  },
+  buttonWrapper: {
+    flex: 1,
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
   },
   button: {
-    flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: '#F3F4F6',
+    paddingVertical: 14,
+    paddingHorizontal: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: borderRadius.md,
   },
-  buttonActive: {
-    backgroundColor: '#A7F3D0',
+  buttonInactive: {
+    backgroundColor: colors.gray[100],
+    borderWidth: 2,
+    borderColor: colors.gray[200],
   },
   buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#6B7280',
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.gray[600],
   },
   buttonTextActive: {
-    color: '#065F46',
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.white,
   },
 });
 

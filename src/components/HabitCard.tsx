@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Animated } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Habit } from '../types';
+import { colors, shadows, borderRadius, spacing } from '../theme/colors';
 
 interface HabitCardProps {
   habit: Habit;
@@ -62,76 +64,92 @@ export const HabitCard: React.FC<HabitCardProps> = ({ habit, onPress }) => {
       }}
     >
       <TouchableOpacity
-        style={[styles.card, isCompleted && styles.cardCompleted]}
+        style={styles.cardWrapper}
         onPress={onPress}
-        activeOpacity={0.7}
+        activeOpacity={0.9}
       >
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <View
-              style={[
-                styles.iconContainer,
-                { backgroundColor: (habit.iconColor || '#065F46') + '20' },
-              ]}
-            >
-              <MaterialCommunityIcons
-                name={(habit.icon || 'check-circle') as any}
-                size={28}
-                color={habit.iconColor || '#065F46'}
-              />
-            </View>
-            <View style={styles.info}>
-              <Text style={styles.name}>{habit.name}</Text>
-              <View style={styles.meta}>
-                <Text style={styles.duration}>{habit.duration}m</Text>
-                <Text style={styles.separator}>•</Text>
-                <View style={styles.streakContainer}>
-                  <MaterialCommunityIcons
-                    name="fire"
-                    size={16}
-                    color="#EA580C"
-                  />
-                  <Text style={styles.streak}>
-                    {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
-                  </Text>
+        <LinearGradient
+          colors={isCompleted ? ['rgba(16, 185, 129, 0.1)', 'rgba(5, 150, 105, 0.05)'] : ['rgba(255, 255, 255, 0.95)', 'rgba(255, 255, 255, 0.9)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.card, isCompleted && styles.cardCompleted]}
+        >
+          <View style={styles.content}>
+            <View style={styles.header}>
+              <LinearGradient
+                colors={[habit.iconColor || colors.primary[600], habit.iconColor || colors.primary[700]]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.iconContainer}
+              >
+                <MaterialCommunityIcons
+                  name={(habit.icon || 'check-circle') as any}
+                  size={32}
+                  color={colors.white}
+                />
+              </LinearGradient>
+              <View style={styles.info}>
+                <Text style={styles.name}>{habit.name}</Text>
+                <View style={styles.meta}>
+                  <View style={styles.durationBadge}>
+                    <MaterialCommunityIcons
+                      name="clock-outline"
+                      size={14}
+                      color={colors.primary[600]}
+                    />
+                    <Text style={styles.duration}>{habit.duration}m</Text>
+                  </View>
+                  <View style={styles.streakContainer}>
+                    <MaterialCommunityIcons
+                      name="fire"
+                      size={18}
+                      color={colors.accent[600]}
+                    />
+                    <Text style={styles.streak}>
+                      {habit.streak} {habit.streak === 1 ? 'day' : 'days'}
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
 
-          {isCompleted && (
-            <View style={styles.completedContainer}>
-              <View style={styles.completedBadge}>
-                <MaterialCommunityIcons
-                  name="check-circle"
-                  size={16}
-                  color="#065F46"
-                />
-                <Text style={styles.completedText}>Completed</Text>
+            {isCompleted && (
+              <View style={styles.completedContainer}>
+                <LinearGradient
+                  colors={[colors.primary[400], colors.primary[500]]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.completedBadge}
+                >
+                  <MaterialCommunityIcons
+                    name="check-circle"
+                    size={18}
+                    color={colors.white}
+                  />
+                  <Text style={styles.completedText}>Done</Text>
+                </LinearGradient>
               </View>
-            </View>
-          )}
-        </View>
+            )}
+          </View>
+        </LinearGradient>
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
+  cardWrapper: {
+    marginBottom: spacing.md,
+  },
   card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderRadius: borderRadius.lg,
+    padding: spacing.lg,
+    ...shadows.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   cardCompleted: {
-    backgroundColor: '#F0FDF4',
-    opacity: 0.8,
+    borderColor: colors.primary[200],
   },
   content: {
     flexDirection: 'row',
@@ -144,44 +162,56 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 14,
+    width: 64,
+    height: 64,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
+    ...shadows.md,
   },
   info: {
     flex: 1,
   },
   name: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#111827',
-    marginBottom: 4,
+    fontSize: 19,
+    fontWeight: '700',
+    color: colors.gray[900],
+    marginBottom: spacing.xs,
+    letterSpacing: -0.3,
   },
   meta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.md,
+  },
+  durationBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: colors.primary[50],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
   },
   duration: {
-    fontSize: 14,
-    color: '#6B7280',
-  },
-  separator: {
-    fontSize: 14,
-    color: '#D1D5DB',
+    fontSize: 13,
+    color: colors.primary[700],
+    fontWeight: '600',
   },
   streakContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    backgroundColor: colors.accent[50],
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.sm,
   },
   streak: {
-    fontSize: 14,
-    color: '#6B7280',
-    fontWeight: '500',
+    fontSize: 13,
+    color: colors.accent[700],
+    fontWeight: '600',
   },
   completedContainer: {
     flexDirection: 'row',
@@ -191,15 +221,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#86EFAC',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+    ...shadows.sm,
   },
   completedText: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#065F46',
+    fontWeight: '700',
+    color: colors.white,
+    letterSpacing: 0.3,
   },
 });
 

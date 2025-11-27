@@ -1,5 +1,8 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, shadows, borderRadius } from '../theme/colors';
 
 interface AddButtonProps {
   onPress: () => void;
@@ -7,8 +10,15 @@ interface AddButtonProps {
 
 export const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.8}>
-      <Text style={styles.icon}>+</Text>
+    <TouchableOpacity style={styles.button} onPress={onPress} activeOpacity={0.9}>
+      <LinearGradient
+        colors={[colors.primary[400], colors.primary[600]] as any}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.gradient}
+      >
+        <MaterialCommunityIcons name="plus" size={32} color={colors.white} />
+      </LinearGradient>
     </TouchableOpacity>
   );
 };
@@ -16,24 +26,19 @@ export const AddButton: React.FC<AddButtonProps> = ({ onPress }) => {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#A7F3D0',
+    right: 24,
+    bottom: 24,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    overflow: 'hidden',
+    ...shadows.xl,
+  },
+  gradient: {
+    width: '100%',
+    height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 8,
-  },
-  icon: {
-    fontSize: 32,
-    fontWeight: '300',
-    color: '#065F46',
   },
 });
 
