@@ -67,40 +67,34 @@ export function AppNavigator() {
     loadHabits();
   }, []);
 
-  // Determine initial route based on auth state
-  const getInitialRoute = () => {
-    if (!isAuthenticated) {
-      return 'Login';
-    }
-    if (!hasCompletedOnboarding && habits.length === 0) {
-      return 'Onboarding';
-    }
-    return 'MainTabs';
-  };
-
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={getInitialRoute()}
-      >
-        {/* Auth Screens */}
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Signup" component={SignupScreen} />
-        
-        {/* App Screens */}
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-        <Stack.Screen
-          name="AddHabit"
-          component={AddHabitScreen}
-          options={{ presentation: 'modal' }}
-        />
-        <Stack.Screen
-          name="EditHabit"
-          component={EditHabitScreen}
-          options={{ presentation: 'modal' }}
-        />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          <>
+            {/* Auth Screens */}
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Signup" component={SignupScreen} />
+          </>
+        ) : (
+          <>
+            {/* App Screens */}
+            {!hasCompletedOnboarding && habits.length === 0 && (
+              <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+            )}
+            <Stack.Screen name="MainTabs" component={MainTabs} />
+            <Stack.Screen
+              name="AddHabit"
+              component={AddHabitScreen}
+              options={{ presentation: 'modal' }}
+            />
+            <Stack.Screen
+              name="EditHabit"
+              component={EditHabitScreen}
+              options={{ presentation: 'modal' }}
+            />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

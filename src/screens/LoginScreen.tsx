@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScreenContainer } from '../components/layout/ScreenContainer';
+import { SocialLoginButtons } from '../components/SocialLoginButtons';
 import { useAuthStore } from '../stores/useAuthStore';
 
 interface LoginScreenProps {
@@ -23,7 +24,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useAuthStore();
+  const { login, loginWithGoogle, loginWithApple, isLoading } = useAuthStore();
 
   const handleLogin = async () => {
     const result = await login(email.trim(), password);
@@ -118,6 +119,22 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
                 <Text style={styles.loginButtonText}>Log In</Text>
               )}
             </TouchableOpacity>
+
+            <SocialLoginButtons
+              onGooglePress={async () => {
+                const result = await loginWithGoogle();
+                if (!result.success) {
+                  Alert.alert('Google Sign-In Failed', result.error || 'An error occurred');
+                }
+              }}
+              onApplePress={async () => {
+                const result = await loginWithApple();
+                if (!result.success) {
+                  Alert.alert('Apple Sign-In Failed', result.error || 'An error occurred');
+                }
+              }}
+              isLoading={isLoading}
+            />
 
             <View style={styles.signupContainer}>
               <Text style={styles.signupText}>Don't have an account? </Text>
